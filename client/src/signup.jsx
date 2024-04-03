@@ -28,10 +28,10 @@ const SignUp = () => {
   };
 
   return (
+    
     <div className="h-screen flex justify-center items-center" style={{ backgroundColor: '#4d0000' }}>
       <form onSubmit={onSubmit} className="space-y-5">
-        <h1 style={{ color: 'white' }}>Register</h1>
-        <div>
+      <h1 className="text-2xl font-semibold text-white mt-10 mb-4">Register</h1>        <div>
           <label htmlFor="email" className="mb-1 block text-sm font-medium text-white">Email</label>
           <input type="email" id="example1" className="block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-400 focus:ring focus:ring-primary-200 focus:ring-opacity-50 disabled:cursor-not-allowed disabled:bg-gray-50 disabled:text-white" placeholder="you@email.com" required 
             value={email} onChange={ev => setEmail(ev.target.value)} />
