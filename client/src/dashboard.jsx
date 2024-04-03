@@ -1,10 +1,13 @@
-import React from 'react';
+import { useState } from 'react';
+import { Outlet } from 'react-router-dom';
+import './App.css';
 
 const Dashboard = () => {
   return (
     <div>
       <h1>Dashboard</h1>
-      {/* Add your dashboard content here */}
+      {/* Add  dashboard content here 
+      This is where the bulk of our website should be*/}
     </div>
   );
 };

@@ -1,11 +1,10 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
-import App from './App.jsx';
 import './index.css';
 import Login from './login.jsx';
 import SignUp from './signup.jsx';
-import Dashboard from './dashboard';
+import Dashboard from './Dashboard.jsx' //idnore error idk why its doing that
 
 const router = createBrowserRouter([
   {
