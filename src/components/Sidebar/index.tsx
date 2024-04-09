@@ -192,7 +192,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                                 pathname === "/" && "text-white"
                               }`}
                             >
-                              Get Bulky
+                              DrinkTracker
                             </Link>
                           </li>
                         </ul>
