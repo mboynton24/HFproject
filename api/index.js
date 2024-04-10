@@ -163,7 +163,7 @@ app.put('/settings', verifyToken, upload.single('photo'), async (req, res) => {
 });
 
 // Get profile route
-app.get('/api/profile', verifyToken, async (req, res) => {
+app.get('/profile', verifyToken, async (req, res) => {
   try {
     const userId = req.userId;
 
