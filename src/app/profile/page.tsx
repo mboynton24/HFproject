@@ -8,6 +8,8 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 
 
+
+
 const Profile = () => {
   const [profile, setProfile] = useState(null);
 
@@ -36,6 +38,34 @@ const Profile = () => {
 
     fetchProfile();
   }, []);
+
+  const handleProfilePhotoUpload = async (event) => {
+    const file = event.target.files[0];
+    const formData = new FormData();
+    formData.append('photo', file);
+  
+    try {
+      const token = localStorage.getItem("token");
+      if (token) {
+        const response = await fetch("http://localhost:4000/settings", {
+          method: 'PUT',
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+          body: formData,
+        });
+  
+        if (response.ok) {
+          const updatedProfile = await response.json();
+          setProfile(updatedProfile);
+        } else {
+          console.error("Failed to update profile photo");
+        }
+      }
+    } catch (error) {
+      console.error("Error updating profile photo:", error);
+    }
+  };
 
   return (
     <DefaultLayout>
@@ -95,21 +125,16 @@ const Profile = () => {
           </div>
           <div className="px-4 pb-6 text-center lg:pb-8 xl:pb-11.5">
             <div className="relative z-30 mx-auto -mt-22 h-30 w-full max-w-30 rounded-full bg-white/20 p-1 backdrop-blur sm:h-44 sm:max-w-44 sm:p-3">
-              <div className="relative drop-shadow-2">
-                <Image
-                  src={"/images/user/user-06.png"}
-                  width={160}
-                  height={160}
-                  style={{
-                    width: "auto",
-                    height: "auto",
-                  }}
-                  alt="profile"
-                />
-                <label
-                  htmlFor="profile"
-                  className="absolute bottom-0 right-0 flex h-8.5 w-8.5 cursor-pointer items-center justify-center rounded-full bg-primary text-white hover:bg-opacity-90 sm:bottom-2 sm:right-2"
-                >
+            <div className="relative drop-shadow-2">
+            <img
+          src={profile?.photoUrl ? `http://localhost:4000/uploads/${profile.photoUrl}` : "/images/user/user-06.png"}
+          alt="profile"
+          className="h-30 w-40 rounded-full object-cover sm:h-44 sm:w-44"
+/>
+  <label
+    htmlFor="profile"
+    className="absolute bottom-0 right-0 flex h-8.5 w-8.5 cursor-pointer items-center justify-center rounded-full bg-primary text-white hover:bg-opacity-90 sm:bottom-2 sm:right-2"
+  >
                   <svg
                     className="fill-current"
                     width="14"
@@ -136,6 +161,8 @@ const Profile = () => {
                     name="profile"
                     id="profile"
                     className="sr-only"
+                    onChange={handleProfilePhotoUpload}
+
                   />
                 </label>
               </div>
