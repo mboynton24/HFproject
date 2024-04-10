@@ -181,6 +181,14 @@ app.get('/profile', verifyToken, async (req, res) => {
   }
 });
 
+// handles a user logging out - takes them back to landing page
+app.post('/logout', (req, res) => {
+  // Clear the user's session / token
+  res.clearCookie('token');
+
+  res.status(200).json({ message: 'Logged out successfully' });
+});
+
     // Error handling middleware
     app.use((err, req, res, next) => {
     console.error(err);

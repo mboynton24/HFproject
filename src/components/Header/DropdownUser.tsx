@@ -2,6 +2,25 @@ import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 
+
+// handles a user trying to log out
+const handleLogout = async () => {
+  try {
+    // Send a request to the server to log out the user
+    await fetch('/logout', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+
+    // Redirect the user to the landing page
+    window.location.href = '/';
+  } catch (error) {
+    console.error('Logout failed:', error);
+  }
+};
+
 const DropdownUser = () => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
 
@@ -160,7 +179,7 @@ const DropdownUser = () => {
             </Link>
           </li>
         </ul>
-        <button className="flex items-center gap-3.5 px-6 py-4 text-sm font-medium duration-300 ease-in-out hover:text-primary lg:text-base">
+        <button className="flex items-center gap-3.5 px-6 py-4 text-sm font-medium duration-300 ease-in-out hover:text-primary lg:text-base"   onClick={handleLogout}>
           <svg
             className="fill-current"
             width="22"
