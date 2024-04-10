@@ -1,15 +1,73 @@
+'use client'
+
 import Breadcrumb from "@/components/Breadcrumbs/Breadcrumb";
 import Image from "next/image";
 import { Metadata } from "next";
 import DefaultLayout from "@/components/Layouts/DefaultLayout";
+import { useEffect, useState } from "react";
 
-export const metadata: Metadata = {
+
+
+
+const Settings = () => {
+  const [token, setToken] = useState("");
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [phoneNumber, setPhoneNumber] = useState("");
+  const [username, setUsername] = useState("");
+  const [bio, setBio] = useState("");
+  const [photo, setPhoto] = useState(null);
+
+  // Fetch user token from local storage when component mounts
+  useEffect(() => {
+    const storedToken = localStorage.getItem("token");
+    if (storedToken) {
+      setToken(storedToken);
+    }
+  }, []);
+
+const metadata: Metadata = {
   title: "Next.js Settings | TailAdmin - Next.js Dashboard Template",
   description:
     "This is Next.js Settings page for TailAdmin - Next.js Tailwind CSS Admin Dashboard Template",
 };
 
-const Settings = () => {
+   // Update handleSubmit function to include token in the request headers
+   const handleSubmit = async (e) => {
+    e.preventDefault();
+  
+    const formData = new FormData();
+    formData.append("name", name);
+    formData.append("email", email);
+    formData.append("phoneNumber", phoneNumber);
+    formData.append("username", username);
+    formData.append("bio", bio);
+    if (photo) {
+      formData.append("photo", photo);
+    }
+  
+    try {
+      const response = await fetch('http://localhost:4000/settings', {
+        method: "PUT",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        body: formData,
+      });
+  
+      if (response.ok) {
+        // Profile updated successfully
+        console.log("Profile updated");
+      } else {
+        // Handle error
+        console.error("Failed to update profile");
+      }
+    } catch (error) {
+      console.error("Error updating profile:", error);
+    }
+  };
+
+
   return (
     <DefaultLayout>
       <div className="mx-auto max-w-270">
@@ -24,7 +82,7 @@ const Settings = () => {
                 </h3>
               </div>
               <div className="p-7">
-                <form action="#">
+              <form onSubmit={handleSubmit}>
                   <div className="mb-5.5 flex flex-col gap-5.5 sm:flex-row">
                     <div className="w-full sm:w-1/2">
                       <label
@@ -66,6 +124,8 @@ const Settings = () => {
                           id="fullName"
                           placeholder="Devid Jhon"
                           defaultValue="Devid Jhon"
+                          value={name}
+                          onChange={(e) => setName(e.target.value)}
                         />
                       </div>
                     </div>
@@ -84,6 +144,8 @@ const Settings = () => {
                         id="phoneNumber"
                         placeholder="+990 3343 7865"
                         defaultValue="+990 3343 7865"
+                        value={phoneNumber}
+                        onChange={(e) => setPhoneNumber(e.target.value)}
                       />
                     </div>
                   </div>
@@ -128,6 +190,8 @@ const Settings = () => {
                         id="emailAddress"
                         placeholder="devidjond45@gmail.com"
                         defaultValue="devidjond45@gmail.com"
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
                       />
                     </div>
                   </div>
@@ -146,6 +210,8 @@ const Settings = () => {
                       id="Username"
                       placeholder="devidjhon24"
                       defaultValue="devidjhon24"
+                      value={username}
+                      onChange={(e) => setUsername(e.target.value)}
                     />
                   </div>
 
@@ -195,6 +261,8 @@ const Settings = () => {
                         rows={6}
                         placeholder="Write your bio here"
                         defaultValue="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque posuere fermentum urna, eu condimentum mauris tempus ut. Donec fermentum blandit aliquet."
+                        value={bio}
+                        onChange={(e) => setBio(e.target.value)}
                       ></textarea>
                     </div>
                   </div>

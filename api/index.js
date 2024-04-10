@@ -4,6 +4,8 @@ const app = express();
 const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
+const multer = require('multer');
+const path = require('path');
 
 
 // hash user password when stored in database
@@ -28,6 +30,11 @@ const userSchema = new mongoose.Schema({
     name: String,
     email: String,
     password: String,
+    phoneNumber: String,
+    username: String,
+    bio: String,
+    photoUrl: String,
+    
   });
   
   const User = mongoose.model('User', userSchema);
@@ -90,12 +97,97 @@ const userSchema = new mongoose.Schema({
     }
   });
 
+  // Configure multer for photo upload
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, 'uploads/');
+  },
+  filename: function (req, file, cb) {
+    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
+    cb(null, uniqueSuffix + path.extname(file.originalname));
+  },
+});
+
+const upload = multer({ storage: storage });
+
+// Middleware to verify JWT token
+const verifyToken = (req, res, next) => {
+  const token = req.headers.authorization?.split(' ')[1];
+
+  if (!token) {
+    return res.status(401).json({ message: 'No token provided' });
+  }
+
+  jwt.verify(token, 'secretkey', (err, decoded) => {
+    if (err) {
+      return res.status(401).json({ message: 'Invalid token' });
+    }
+
+    req.userId = decoded.userId;
+    next();
+  });
+};
+
+// Update profile route
+app.put('/settings', verifyToken, upload.single('photo'), async (req, res) => {
+  try {
+    const { name, email, phoneNumber, username, bio } = req.body;
+    const photo = req.file;
+
+    const userId = req.userId;
+
+    // Update user profile in the database
+    const user = await User.findByIdAndUpdate(
+      userId,
+      {
+        name,
+        email,
+        phoneNumber,
+        username,
+        bio,
+      },
+      { new: true }
+    );
+
+    if (photo) {
+      // Update user's photoUrl with the uploaded photo's filename
+      user.photoUrl = photo.filename;
+      await user.save();
+    }
+
+    res.status(200).json(user);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+});
+
+// Get profile route
+app.get('/api/profile', verifyToken, async (req, res) => {
+  try {
+    const userId = req.userId;
+
+    // Fetch user profile from the database
+    const user = await User.findById(userId);
+
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    res.status(200).json(user);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+});
+
     // Error handling middleware
     app.use((err, req, res, next) => {
     console.error(err);
     res.status(500).json({ error: 'Internal Server Error' });
   });
   
+
   
   // Start the server
   app.listen(4000, () => {
