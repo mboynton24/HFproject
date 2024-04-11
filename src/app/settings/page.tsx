@@ -16,6 +16,7 @@ const Settings = () => {
   const [phoneNumber, setPhoneNumber] = useState("");
   const [username, setUsername] = useState("");
   const [bio, setBio] = useState("");
+  const [profileUrl, setProfileUrl] = useState(null);
 
   // Fetch user token from local storage when component mounts
   useEffect(() => {
@@ -31,6 +32,34 @@ const metadata: Metadata = {
     "This is Next.js Settings page for TailAdmin - Next.js Tailwind CSS Admin Dashboard Template",
 };
 
+const handleProfilePhotoUpload = async (event) => {
+  const file = event.target.files[0];
+  const formData = new FormData();
+  formData.append('profile', file);
+
+  try {
+    const token = localStorage.getItem("token");
+    if (token) {
+      const response = await fetch("http://localhost:4000/settings", {
+        method: 'PUT',
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        body: formData,
+      });
+
+      if (response.ok) {
+        const updatedProfile = await response.json();
+        setProfileUrl(updatedProfile.coverUrl);
+      } else {
+        console.error("Failed to update profile photo");
+      }
+    }
+  } catch (error) {
+    console.error("Error updating profile photo:", error);
+  }
+};
+
    // Update handleSubmit function to include token in the request headers
    const handleSubmit = async (e) => {
     e.preventDefault();
@@ -41,6 +70,7 @@ const metadata: Metadata = {
     formData.append("phoneNumber", phoneNumber);
     formData.append("username", username);
     formData.append("bio", bio);
+    
     
   
     try {
@@ -293,8 +323,8 @@ const metadata: Metadata = {
                 <form action="#">
                   <div className="mb-4 flex items-center gap-3">
                     <div className="h-14 w-14 rounded-full">
-                      <Image
-                        src={"/images/user/user-03.png"}
+                      <img
+                        src={profileUrl ? `http://localhost:4000/uploads/${profileUrl}` : "/images/cover/cover-01.png"}
                         width={55}
                         height={55}
                         alt="User"
@@ -320,9 +350,11 @@ const metadata: Metadata = {
                     className="relative mb-5.5 block w-full cursor-pointer appearance-none rounded border border-dashed border-primary bg-gray px-4 py-4 dark:bg-meta-4 sm:py-7.5"
                   >
                     <input
-                      type="file"
-                      accept="image/*"
-                      className="absolute inset-0 z-50 m-0 h-full w-full cursor-pointer p-0 opacity-0 outline-none"
+                       type="file"
+                       name="profileUrl"
+                       id="profileUrl"
+                       onChange={handleProfilePhotoUpload}
+                       className="absolute inset-0 z-50 m-0 h-full w-full cursor-pointer p-0 opacity-0 outline-none"
                     />
                     <div className="flex flex-col items-center justify-center space-y-3">
                       <span className="flex h-10 w-10 items-center justify-center rounded-full border border-stroke bg-white dark:border-strokedark dark:bg-boxdark">

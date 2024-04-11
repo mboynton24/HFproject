@@ -2,6 +2,11 @@ import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 
+interface ProfileData {
+  profileUrl: string;
+  // Add other properties as needed
+}
+
 
 // handles a user trying to log out
 const handleLogout = async () => {
@@ -23,6 +28,8 @@ const handleLogout = async () => {
 
 const DropdownUser = () => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [profileData, setProfileData] = useState(null);
+
 
   const trigger = useRef<any>(null);
   const dropdown = useRef<any>(null);
@@ -53,6 +60,33 @@ const DropdownUser = () => {
     return () => document.removeEventListener("keydown", keyHandler);
   });
 
+  // Fetch profile data
+  useEffect(() => {
+    const fetchProfileData = async () => {
+      try {
+        const token = localStorage.getItem("token");
+        if (token) {
+          const response = await fetch("http://localhost:4000/profile", {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          });
+
+          if (response.ok) {
+            const data: ProfileData = await response.json();
+            setProfileData(data);
+          } else {
+            console.error("Failed to fetch profile data");
+          }
+        }
+      } catch (error) {
+        console.error("Error fetching profile data:", error);
+      }
+    };
+
+    fetchProfileData();
+  }, []);
+
   return (
     <div className="relative">
       <Link
@@ -68,17 +102,17 @@ const DropdownUser = () => {
         </span>
 
         <span className="h-12 w-12 rounded-full">
-          <Image
-            width={112}
-            height={112}
-            src={"/images/user/user-01.png"}
-            style={{
-              width: "auto",
-              height: "auto",
-            }}
-            alt="User"
-          />
-        </span>
+        <img
+          src={profileData?.profileUrl ? `http://localhost:4000/uploads/${profileData.profileUrl}` : "/images/user/user-06.png"}          width={112}
+          height={112}
+          style={{
+            width: "auto",
+            height: "auto",
+          }}
+          alt="User"
+/>
+          
+      </span>
 
         <svg
           className="hidden fill-current sm:block"

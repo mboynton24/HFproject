@@ -36,6 +36,7 @@ const userSchema = new mongoose.Schema({
     bio: String,
     photoUrl: String,
     coverUrl: String,
+    profileUrl: String,
     
   });
   
@@ -131,11 +132,12 @@ const verifyToken = (req, res, next) => {
 };
 
 // Update profile route - allows is called when user wants to upload photos for simplicicty
-app.put('/settings', verifyToken, upload.fields([{ name: 'photo', maxCount: 1 }, { name: 'cover', maxCount: 1 }]), async (req, res) => {
+app.put('/settings', verifyToken, upload.fields([{ name: 'photo', maxCount: 1 }, { name: 'cover', maxCount: 1 }, { name: 'profile', maxCount: 1 }]), async (req, res) => {
   try {
     const { name, email, phoneNumber, username, bio } = req.body;
     const photo = req.files['photo']?.[0];
     const cover = req.files['cover']?.[0];
+    const profile = req.files['profile']?.[0];
 
     const userId = req.userId;
 
@@ -149,6 +151,7 @@ app.put('/settings', verifyToken, upload.fields([{ name: 'photo', maxCount: 1 },
         bio,
         ...(photo && { photoUrl: photo.filename }),
         ...(cover && { coverUrl: cover.filename }),
+        ...(profile && { profileUrl: profile.filename }),
       },
       { new: true }
     );
@@ -171,6 +174,11 @@ app.get('/profile', verifyToken, async (req, res) => {
     if (!user) {
       return res.status(404).json({ message: 'User not found' });
     }
+
+    const profileData = {
+      profileUrl: user.profileUrl,
+      // can include other data if need to be called
+    };
 
     res.status(200).json(user);
   } catch (error) {
