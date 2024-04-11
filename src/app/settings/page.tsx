@@ -16,7 +16,6 @@ const Settings = () => {
   const [phoneNumber, setPhoneNumber] = useState("");
   const [username, setUsername] = useState("");
   const [bio, setBio] = useState("");
-  const [photo, setPhoto] = useState(null);
 
   // Fetch user token from local storage when component mounts
   useEffect(() => {
@@ -42,9 +41,7 @@ const metadata: Metadata = {
     formData.append("phoneNumber", phoneNumber);
     formData.append("username", username);
     formData.append("bio", bio);
-    if (photo) {
-      formData.append("photo", photo);
-    }
+    
   
     try {
       const response = await fetch('http://localhost:4000/settings', {

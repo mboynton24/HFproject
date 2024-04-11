@@ -35,6 +35,7 @@ const userSchema = new mongoose.Schema({
     username: String,
     bio: String,
     photoUrl: String,
+    coverUrl: String,
     
   });
   
@@ -129,15 +130,15 @@ const verifyToken = (req, res, next) => {
   });
 };
 
-// Update profile route
-app.put('/settings', verifyToken, upload.single('photo'), async (req, res) => {
+// Update profile route - allows is called when user wants to upload photos for simplicicty
+app.put('/settings', verifyToken, upload.fields([{ name: 'photo', maxCount: 1 }, { name: 'cover', maxCount: 1 }]), async (req, res) => {
   try {
     const { name, email, phoneNumber, username, bio } = req.body;
-    const photo = req.file;
+    const photo = req.files['photo']?.[0];
+    const cover = req.files['cover']?.[0];
 
     const userId = req.userId;
 
-    // Update user profile in the database
     const user = await User.findByIdAndUpdate(
       userId,
       {
@@ -146,15 +147,11 @@ app.put('/settings', verifyToken, upload.single('photo'), async (req, res) => {
         phoneNumber,
         username,
         bio,
+        ...(photo && { photoUrl: photo.filename }),
+        ...(cover && { coverUrl: cover.filename }),
       },
       { new: true }
     );
-
-    if (photo) {
-      // Update user's photoUrl with the uploaded photo's filename
-      user.photoUrl = photo.filename;
-      await user.save();
-    }
 
     res.status(200).json(user);
   } catch (error) {

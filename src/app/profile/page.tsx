@@ -11,7 +11,9 @@ import { useEffect, useState } from "react";
 
 
 const Profile = () => {
+
   const [profile, setProfile] = useState(null);
+  const [coverUrl, setCoverUrl] = useState(null);
 
   useEffect(() => {
     const fetchProfile = async () => {
@@ -27,6 +29,7 @@ const Profile = () => {
           if (response.ok) {
             const data = await response.json();
             setProfile(data);
+            setCoverUrl(data.coverUrl);
           } else {
             console.error("Failed to fetch profile");
           }
@@ -39,6 +42,7 @@ const Profile = () => {
     fetchProfile();
   }, []);
 
+  // handles photo upload below cover photo
   const handleProfilePhotoUpload = async (event) => {
     const file = event.target.files[0];
     const formData = new FormData();
@@ -67,23 +71,48 @@ const Profile = () => {
     }
   };
 
+
+  // handles photo upload for cover photo
+  const handleCoverPhotoUpload = async (event) => {
+    const file = event.target.files[0];
+    const formData = new FormData();
+    formData.append('cover', file);
+  
+    try {
+      const token = localStorage.getItem("token");
+      if (token) {
+        const response = await fetch("http://localhost:4000/settings", {
+          method: 'PUT',
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+          body: formData,
+        });
+  
+        if (response.ok) {
+          const updatedProfile = await response.json();
+          setCoverUrl(updatedProfile.coverUrl);
+        } else {
+          console.error("Failed to update cover photo");
+        }
+      }
+    } catch (error) {
+      console.error("Error updating cover photo:", error);
+    }
+  };
+
   return (
     <DefaultLayout>
       <div className="mx-auto max-w-242.5">
         <Breadcrumb pageName="Profile" />
 
         <div className="overflow-hidden rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark">
-          <div className="relative z-20 h-35 md:h-65">
-            <Image
-              src={"/images/cover/cover-01.png"}
-              alt="profile cover"
-              className="h-full w-full rounded-tl-sm rounded-tr-sm object-cover object-center"
-              width={970}
-              height={260}
-              style={{
-                width: "auto",
-                height: "auto",
-              }}
+          <div className="relative z-20 h-50 md:h-75">
+            <img
+             src={coverUrl ? `http://localhost:4000/uploads/${coverUrl}` : "/images/cover/cover-01.png"}
+             alt="profile cover"
+             className="h-full w-full rounded-tl-sm rounded-tr-sm object-cover object-center"
+             layout="fill"
             />
             <div className="absolute bottom-1 right-1 z-10 xsm:bottom-4 xsm:right-4">
               <label
@@ -95,6 +124,8 @@ const Profile = () => {
                   name="cover"
                   id="cover"
                   className="sr-only"
+                  onChange={handleCoverPhotoUpload}
+
                 />
                 <span>
                   <svg
