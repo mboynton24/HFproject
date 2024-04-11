@@ -29,7 +29,7 @@ const Home = () => {
         Whether you're aiming to cut down, quit, or simply adopt a healthier lifestyle, our app has you covered. With personalized plans tailored to your needs and preferences, reaching your drinking goals has never been easier.
       </SectionTitle>
       <Benefits data={benefitOne} />
-      <Benefits imgPos="right" data={benefitTwo} />
+      
       <Footer />
     </>
   );
