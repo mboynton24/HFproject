@@ -33,7 +33,7 @@ function getDesignTokens(mode) {
       MuiInputBase: {
         styleOverrides: {
           root: {
-            backgroundColor: mode === 'dark' ? "#313D4A" : "#e8e8e8",
+            backgroundColor: mode === 'dark' ? "#313D4A" : "#EFF4FB",
             color: mode === 'dark' ? "#ffffff" : "#313D4A",
           }
         }
@@ -93,7 +93,7 @@ export default function DatePickerValue() {
             id="goal"
             placeholder='Enter your goal'
           />
-          <button className='border py-2 pl-4 pr-4 rounded text-black dark:text-white' type='submit'>Submit</button>
+          <button className='border py-2 pl-4 pr-4 font-bold rounded text-black bg-gray dark:bg-meta-4 dark:font-bold dark:text-white' type='submit'>Submit</button>
         </div>
       </LocalizationProvider>
     </ThemeProvider>
