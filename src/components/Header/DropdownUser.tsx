@@ -8,23 +8,7 @@ interface ProfileData {
 }
 
 
-// handles a user trying to log out
-const handleLogout = async () => {
-  try {
-    // Send a request to the server to log out the user
-    await fetch('/logout', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    });
 
-    // Redirect the user to the landing page
-    window.location.href = '/';
-  } catch (error) {
-    console.error('Logout failed:', error);
-  }
-};
 
 const DropdownUser = () => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
@@ -60,32 +44,59 @@ const DropdownUser = () => {
     return () => document.removeEventListener("keydown", keyHandler);
   });
 
-  // Fetch profile data
   useEffect(() => {
     const fetchProfileData = async () => {
       try {
-        const token = localStorage.getItem("token");
+        const token = localStorage.getItem('token');
         if (token) {
-          const response = await fetch("http://localhost:4000/profile", {
+          const response = await fetch('http://localhost:4000/profile', {
             headers: {
               Authorization: `Bearer ${token}`,
             },
           });
-
+  
           if (response.ok) {
             const data: ProfileData = await response.json();
             setProfileData(data);
           } else {
-            console.error("Failed to fetch profile data");
+            console.error('Failed to fetch profile data');
+            setProfileData(null);
           }
+        } else {
+          setProfileData(null);
         }
       } catch (error) {
-        console.error("Error fetching profile data:", error);
+        console.error('Error fetching profile data:', error);
+        setProfileData(null);
       }
     };
-
+  
     fetchProfileData();
   }, []);
+
+  // handles a user trying to log out
+const handleLogout = async () => {
+  try {
+    // Send a request to the server to log out the user
+    await fetch('/logout', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+
+    // Remove the token from localStorage
+    localStorage.removeItem('token');
+
+    // Clear the profileData state
+    setProfileData(null);
+
+    // Redirect the user to the landing page
+    window.location.href = '/';
+  } catch (error) {
+    console.error('Logout failed:', error);
+  }
+};
 
   return (
     <div className="relative">
@@ -102,17 +113,32 @@ const DropdownUser = () => {
         </span>
 
         <span className="h-12 w-12 rounded-full">
-        <img
-          src={profileData?.profileUrl ? `http://localhost:4000/uploads/${profileData.profileUrl}` : "/images/user/user-06.png"}          width={112}
-          height={112}
-          style={{
-            width: "auto",
-            height: "auto",
-          }}
-          alt="User"
-/>
-          
-      </span>
+  {profileData?.profileUrl ? (
+    <img
+      src={`http://localhost:4000/uploads/${profileData.profileUrl}`}
+      width={64}
+      height={64}
+      style={{
+        width: "60px",
+        height: "55px",
+        borderRadius: "50%",
+      }}
+      alt="User"
+    />
+  ) : (
+    <img
+      src="/images/user/user-06.png"
+      width={64}
+      height={64}
+      style={{
+        width: "60px",
+        height: "55px",
+        borderRadius: "50%",
+      }}
+      alt="User"
+    />
+  )}
+</span>
 
         <svg
           className="hidden fill-current sm:block"
