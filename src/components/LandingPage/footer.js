@@ -31,10 +31,11 @@ export default function Footer() {
             </div>
 
             <div className="max-w-md mt-4 text-gray-500 dark:text-gray-400">
-            Welcome to GetBulky, where innovation meets motivation. Our revolutionary web app is designed to empower you on your fitness journey like never before.
-            Say goodbye to mundane workouts and hello to personalized plans that adapt to your unique goals and lifestyle. 
-            With a seamless blend of cutting-edge technology and expert guidance, achieving your fitness aspirations has never been more accessible. 
-            Sign up now and unlock your full potential with GetBulky.
+            Welcome to DrinkTracker, your ultimate companion on the journey towards mindful drinking. 
+            Our innovative platform is dedicated to helping you monitor your alcohol  intake, set realistic drinking goals,
+            and inspire you through though-provoking quotes. Embrace a balanced lifestyle with tools that are tailored to fit 
+            your personal objectives and daily habits. Join DrinkTracker today and take a step forward in managing your drinking habits
+            effectively and achieving your wellness goals.
             </div>
 
             {/* <div className="mt-5">
