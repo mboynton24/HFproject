@@ -5,6 +5,7 @@ import {
   DevicePhoneMobileIcon,
   AdjustmentsHorizontalIcon,
   SunIcon,
+  CalendarIcon
 } from "../../../node_modules/@heroicons/react/24/solid";
 
 import benefitOneImg from "../../../public/images/Landing/A2-homepage.png";
@@ -16,19 +17,19 @@ const benefitOne = {
   image: benefitOneImg,
   bullets: [
     {
-      title: "Feature",
-      desc: "What Feature Does",
+      title: "Ease of Use",
+      desc: "Allows you to keep all of your drinking metrics in one place",
       icon: <FaceSmileIcon />,
     },
     {
-      title: "Feature",
-      desc: "What Feature Does",
+      title: "Charts",
+      desc: "Easy to read charts",
       icon: <ChartBarSquareIcon />,
     },
     {
-      title: "Feature",
-      desc: "What Feature Does",
-      icon: <CursorArrowRaysIcon />,
+      title: "History",
+      desc: "Easy to check goals and history",
+      icon: <CalendarIcon />,
     },
   ],
 };

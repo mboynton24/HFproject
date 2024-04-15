@@ -1,6 +1,5 @@
 "use client"
 import Link from "next/link";
-import ThemeChanger from "./DarkSwitch";
 import Image from "next/image"
 import { Disclosure } from "@headlessui/react";
 
@@ -21,8 +20,8 @@ const Navbar = () => {
             <>
               <div className="flex flex-wrap items-center justify-between w-full lg:w-auto">
                 <Link href="/">
-                  <span className="flex items-center space-x-2 text-2xl font-medium text-indigo-500 dark:text-gray-100">
-                    <span>GetBulky</span>
+                  <span className="flex pl-5 items-center space-x-2 text-3xl font-medium font-bold text-indigo-500 dark:text-gray-100">
+                    <span>DrinkTracker</span>
                   </span>
                 </Link>
 
@@ -84,7 +83,7 @@ const Navbar = () => {
               Get Started
           </Link>
 
-          <ThemeChanger />
+         
         </div>
       </nav>
     </div>

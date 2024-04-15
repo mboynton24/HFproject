@@ -72,6 +72,7 @@ export default function DatePickerValue() {
         <div className=' col-span-12 rounded-sm border border-stroke bg-white p-7.5 shadow-default dark:border-strokedark dark:bg-boxdark xl:col-span-4 text-white'>
           <div className='mb-4 text-black font-bold dark:font-bold dark:text-white'>Enter Drinks and Goals</div>
           <DesktopDatePicker
+            className='w-full'
             label="Enter a date"
             value={value}
             onChange={setValue}
