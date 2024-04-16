@@ -85,6 +85,10 @@ export default function DatePickerValue() {
       console.log(response.data);
       setDrink('');
       setGoal('');
+
+    // Reload the page after a successful submission
+    window.location.reload();
+
     } catch (error) {
       console.error(error);
     }

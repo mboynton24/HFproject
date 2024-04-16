@@ -39,26 +39,19 @@ const ChartOne: React.FC = () => {
           "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
         ];
   
-        const currentDate = new Date();
-        const currentMonthIndex = currentDate.getMonth();
-  
         const updatedDrinksData = Array(12).fill(0);
         const updatedGoalsData = Array(12).fill(0);
   
         drinks.forEach((drink: { date: string; amount: number }) => {
           const drinkDate = new Date(drink.date);
           const drinkMonthIndex = drinkDate.getMonth();
-          const monthsDifference = drinkMonthIndex - currentMonthIndex;
-          const index = (monthsDifference + 12) % 12;
-          updatedDrinksData[index] += drink.amount;
+          updatedDrinksData[drinkMonthIndex] += drink.amount;
         });
   
         goals.forEach((goal: { date: string; amount: number }) => {
           const goalDate = new Date(goal.date);
           const goalMonthIndex = goalDate.getMonth();
-          const monthsDifference = goalMonthIndex - currentMonthIndex;
-          const index = (monthsDifference + 12) % 12;
-          updatedGoalsData[index] += goal.amount;
+          updatedGoalsData[goalMonthIndex] += goal.amount;
         });
   
         setState((prevState) => ({
@@ -79,6 +72,7 @@ const ChartOne: React.FC = () => {
     };
     fetchData();
   }, []);
+  
 
   const options: ApexOptions = {
     legend: {
@@ -157,6 +151,9 @@ const ChartOne: React.FC = () => {
     xaxis: {
       type: "category",
       categories: [
+        "Jan",
+        "Feb",
+        "Mar",
         "Apr",
         "May",
         "Jun",
@@ -166,9 +163,6 @@ const ChartOne: React.FC = () => {
         "Oct",
         "Nov",
         "Dec",
-        "Jan",
-        "Feb",
-        "Mar",
       ],
       axisBorder: {
         show: false,

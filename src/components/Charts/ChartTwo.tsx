@@ -34,8 +34,7 @@ const ChartTwo: React.FC = () => {
         });
         const { drinks, goals } = response.data;
   
-        const currentDate = new Date();
-        const currentDayIndex = currentDate.getDay();
+        const dayNames = ["S", "M", "T", "W", "T", "F", "S"];
   
         const updatedDrinksData = Array(7).fill(0);
         const updatedGoalsData = Array(7).fill(0);
@@ -43,17 +42,13 @@ const ChartTwo: React.FC = () => {
         drinks.forEach((drink: { date: string; amount: number }) => {
           const drinkDate = new Date(drink.date);
           const drinkDayIndex = drinkDate.getDay();
-          const daysDifference = drinkDayIndex - currentDayIndex;
-          const index = (daysDifference + 7) % 7;
-          updatedDrinksData[index] += drink.amount;
+          updatedDrinksData[drinkDayIndex] += drink.amount;
         });
   
         goals.forEach((goal: { date: string; amount: number }) => {
           const goalDate = new Date(goal.date);
           const goalDayIndex = goalDate.getDay();
-          const daysDifference = goalDayIndex - currentDayIndex;
-          const index = (daysDifference + 7) % 7;
-          updatedGoalsData[index] += goal.amount;
+          updatedGoalsData[goalDayIndex] += goal.amount;
         });
   
         setState((prevState) => ({
