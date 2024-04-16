@@ -220,6 +220,23 @@ app.post('/drinks', verifyToken, async (req, res) => {
   }
 });
 
+// route to get drink goals
+app.get('/drinks', verifyToken, async (req, res) => {
+  try {
+    const userId = req.userId;
+
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    res.status(200).json({ drinks: user.drinks, goals: user.goals });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+});
+
     // Error handling middleware
     app.use((err, req, res, next) => {
     console.error(err);
