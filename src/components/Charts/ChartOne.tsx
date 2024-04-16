@@ -1,4 +1,5 @@
 import { ApexOptions } from "apexcharts";
+import axios from 'axios';
 import React, { useState } from "react";
 import ReactApexChart from "react-apexcharts";
 

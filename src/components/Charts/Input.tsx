@@ -4,6 +4,7 @@ import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { DesktopDatePicker } from '@mui/x-date-pickers/DesktopDatePicker';
+import axios from 'axios';
 
 function getDesignTokens(mode) {
   return {
@@ -46,7 +47,8 @@ export default function DatePickerValue() {
   const [mode, setMode] = React.useState('light');
   const theme = React.useMemo(() => createTheme(getDesignTokens(mode)), [mode]);
   const [value, setValue] = React.useState<Dayjs | null>(dayjs('2022-04-17'));
-  //const [drink, setDrink] = React.useState
+  const [drink, setDrink] = React.useState('');
+  const [goal, setGoal] = React.useState('');
 
   React.useEffect(() => {
     const observer = new MutationObserver((mutations) => {
@@ -65,6 +67,28 @@ export default function DatePickerValue() {
 
     return () => observer.disconnect();
   }, []);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+  
+    try {
+      const response = await axios.post('http://localhost:4000/drinks', {
+        drink: parseFloat(drink),
+        goal: parseFloat(goal),
+        date: value?.toDate(),
+      }, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('token')}`,
+        },
+      });
+  
+      console.log(response.data);
+      setDrink('');
+      setGoal('');
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   return (
     <ThemeProvider theme={theme}>
@@ -85,6 +109,8 @@ export default function DatePickerValue() {
             name="drinks"
             id="drinks"
             placeholder='Enter number of drinks'
+            value={drink}
+            onChange={(e) => setDrink(e.target.value)}
           />
           <label className='text-black font-bold dark:font-bold dark:text-white'>Goal</label>
           <input
@@ -93,8 +119,11 @@ export default function DatePickerValue() {
             name="goal"
             id="goal"
             placeholder='Enter your goal'
+            value={goal}
+            onChange={(e) => setGoal(e.target.value)}
           />
-          <button className='border py-2 pl-4 pr-4 font-bold rounded text-black bg-gray dark:bg-meta-4 dark:font-bold dark:text-white' type='submit'>Submit</button>
+          <button className='border py-2 pl-4 pr-4 font-bold rounded text-black bg-gray dark:bg-meta-4 dark:font-bold dark:text-white'   onClick={handleSubmit}
+          type='submit'>Submit</button>
         </div>
       </LocalizationProvider>
     </ThemeProvider>
