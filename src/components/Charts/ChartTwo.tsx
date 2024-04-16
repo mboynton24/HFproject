@@ -1,75 +1,7 @@
 import { ApexOptions } from "apexcharts";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import ReactApexChart from "react-apexcharts";
-
-const options: ApexOptions = {
-  colors: ["#3C50E0", "#80CAEE"],
-  chart: {
-    fontFamily: "Satoshi, sans-serif",
-    type: "bar",
-    height: 335,
-    stacked: false,
-    toolbar: {
-      show: false,
-    },
-    zoom: {
-      enabled: false,
-    },
-  },
-
-  responsive: [
-    {
-      breakpoint: 1536,
-      options: {
-        plotOptions: {
-          bar: {
-            borderRadius: 0,
-            columnWidth: "25%",
-          },
-        },
-      },
-    },
-  ],
-  plotOptions: {
-    bar: {
-      horizontal: false,
-      borderRadius: 0,
-      columnWidth: "25%",
-      borderRadiusApplication: "end",
-      borderRadiusWhenStacked: "last",
-    },
-  },
-  dataLabels: {
-    enabled: false,
-  },
-
-  xaxis: {
-    categories: ["M", "T", "W", "T", "F", "S", "S"],
-  },
-  yaxis: {
-    title: {
-      style: {
-        fontSize: "0px",
-      },
-    },
-    min: 0,
-    max: 30,
-  },
-  legend: {
-    position: "top",
-    horizontalAlign: "left",
-    fontFamily: "Satoshi",
-    fontWeight: 500,
-    fontSize: "14px",
-
-    markers: {
-      radius: 99,
-    },
-  },
-  fill: {
-    opacity: 1,
-  },
-};
+import axios from 'axios';
 
 interface ChartTwoState {
   series: {
@@ -82,23 +14,132 @@ const ChartTwo: React.FC = () => {
   const [state, setState] = useState<ChartTwoState>({
     series: [
       {
-        //dynamincally populate these two!!
         name: "Drinks",
-        data: [44, 55, 41, 67, 22, 43, 65],
+        data: Array(7).fill(0),
       },
       {
         name: "Goal",
-        data: [13, 23, 20, 8, 13, 27, 15],
+        data: Array(7).fill(0),
       },
     ],
   });
 
-  const handleReset = () => {
-    setState((prevState) => ({
-      ...prevState,
-    }));
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await axios.get('http://localhost:4000/drinks', {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('token')}`,
+          },
+        });
+        const { drinks, goals } = response.data;
+  
+        const currentDate = new Date();
+        const currentDayIndex = currentDate.getDay();
+  
+        const updatedDrinksData = Array(7).fill(0);
+        const updatedGoalsData = Array(7).fill(0);
+  
+        drinks.forEach((drink: { date: string; amount: number }) => {
+          const drinkDate = new Date(drink.date);
+          const drinkDayIndex = drinkDate.getDay();
+          const daysDifference = drinkDayIndex - currentDayIndex;
+          const index = (daysDifference + 7) % 7;
+          updatedDrinksData[index] += drink.amount;
+        });
+  
+        goals.forEach((goal: { date: string; amount: number }) => {
+          const goalDate = new Date(goal.date);
+          const goalDayIndex = goalDate.getDay();
+          const daysDifference = goalDayIndex - currentDayIndex;
+          const index = (daysDifference + 7) % 7;
+          updatedGoalsData[index] += goal.amount;
+        });
+  
+        setState((prevState) => ({
+          series: [
+            {
+              name: "Drinks",
+              data: updatedDrinksData,
+            },
+            {
+              name: "Goal",
+              data: updatedGoalsData,
+            },
+          ],
+        }));
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      }
+    };
+    fetchData();
+  }, []);
+
+  const options: ApexOptions = {
+    colors: ["#3C50E0", "#80CAEE"],
+    chart: {
+      fontFamily: "Satoshi, sans-serif",
+      type: "bar",
+      height: 335,
+      stacked: false,
+      toolbar: {
+        show: false,
+      },
+      zoom: {
+        enabled: false,
+      },
+    },
+    responsive: [
+      {
+        breakpoint: 1536,
+        options: {
+          plotOptions: {
+            bar: {
+              borderRadius: 0,
+              columnWidth: "25%",
+            },
+          },
+        },
+      },
+    ],
+    plotOptions: {
+      bar: {
+        horizontal: false,
+        borderRadius: 0,
+        columnWidth: "25%",
+        borderRadiusApplication: "end",
+        borderRadiusWhenStacked: "last",
+      },
+    },
+    dataLabels: {
+      enabled: false,
+    },
+    xaxis: {
+      categories: ["M", "T", "W", "T", "F", "S", "S"],
+    },
+    yaxis: {
+      title: {
+        style: {
+          fontSize: "0px",
+        },
+      },
+      min: 0,
+      max: 30,
+    },
+    legend: {
+      position: "top",
+      horizontalAlign: "left",
+      fontFamily: "Satoshi",
+      fontWeight: 500,
+      fontSize: "14px",
+      markers: {
+        radius: 99,
+      },
+    },
+    fill: {
+      opacity: 1,
+    },
   };
-  handleReset;
 
   return (
     <div className="col-span-12 rounded-sm border border-stroke bg-white p-7.5 shadow-default dark:border-strokedark dark:bg-boxdark xl:col-span-4">
