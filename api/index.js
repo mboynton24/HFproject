@@ -37,6 +37,8 @@ const userSchema = new mongoose.Schema({
     photoUrl: String,
     coverUrl: String,
     profileUrl: String,
+    drinks: [{ date: Date, amount: Number }],
+    goals: [{ date: Date, amount: Number }],
     
   });
   
@@ -193,6 +195,29 @@ app.post('/logout', (req, res) => {
   res.clearCookie('token');
 
   res.status(200).json({ message: 'Logged out successfully' });
+});
+
+
+// handles a user submitting drinking stats
+app.post('/drinks', verifyToken, async (req, res) => {
+  try {
+    const { drink, goal, date } = req.body;
+    const userId = req.userId;
+
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    user.drinks.push({ date, amount: drink });
+    user.goals.push({ date, amount: goal });
+    await user.save();
+
+    res.status(200).json({ message: 'Drink and goal data submitted successfully' });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
 });
 
     // Error handling middleware
